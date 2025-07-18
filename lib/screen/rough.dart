@@ -1,72 +1,62 @@
 import 'package:flutter/material.dart';
 
-class FloatingLabelInsideField extends StatefulWidget {
-  const FloatingLabelInsideField({super.key});
-
+class HighlightTextField extends StatefulWidget {
   @override
-  State<FloatingLabelInsideField> createState() => _FloatingLabelInsideFieldState();
+  _HighlightTextFieldState createState() => _HighlightTextFieldState();
 }
 
-class _FloatingLabelInsideFieldState extends State<FloatingLabelInsideField> {
-  final TextEditingController _controller = TextEditingController();
+class _HighlightTextFieldState extends State<HighlightTextField> {
+  final TextEditingController name = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-
-  bool get _shouldFloat => _focusNode.hasFocus || _controller.text.isNotEmpty;
 
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() => setState(() {}));
-    _focusNode.addListener(() => setState(() {}));
+    _focusNode.addListener(() {
+      setState(() {}); // ✅ Trigger rebuild when focus changes
+    });
+  }
+
+  @override
+  void dispose() {
+    name.dispose();
+    _focusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Stack(
-        children: [
-          // TextField underneath
-          TextField(
-            controller: _controller,
-            focusNode: _focusNode,
-            style: const TextStyle(
-              fontSize: 14,
-              fontFamily: 'Raleway',
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
-            decoration: InputDecoration(
-              hintText: '', // We use our own label
-              contentPadding: const EdgeInsets.fromLTRB(12, 24, 12, 12), // create space
-              enabledBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Color(0xFFD4D4D4)),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: const BorderSide(color: Color(0xFF339D44), width: 2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-          ),
+    bool isFocused = _focusNode.hasFocus;
 
-          // Floating Label on top
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 200),
-            left: 16,
-            top: _shouldFloat ? 6 : 26, // float up, but remain inside
-            child: AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
-              style: TextStyle(
-                fontSize: _shouldFloat ? 11 : 14,
-                color: _shouldFloat ? const Color(0xFF339D44) : const Color(0xFFB4B4B4),
-                fontFamily: 'Raleway',
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: isFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: TextField(
+            controller: name,
+            focusNode: _focusNode,
+            cursorColor: Color(0xFF339D44),
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              labelText: "Name",
+              labelStyle: TextStyle(
+                fontSize: 13.33,
                 fontWeight: FontWeight.w400,
+                fontFamily: 'Raleway',
+                color: isFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
               ),
-              child: const Text("Name"),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

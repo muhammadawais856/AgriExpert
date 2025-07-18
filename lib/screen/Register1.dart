@@ -12,10 +12,70 @@ class Register1 extends StatefulWidget {
 class _Register1State extends State<Register1> {
 
   @override
-  TextEditingController name=TextEditingController();
-  TextEditingController email=TextEditingController();
-  TextEditingController password=TextEditingController();
-  TextEditingController confirmpassword=TextEditingController();
+  // Controllers
+  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController confirmpassword = TextEditingController();
+
+// FocusNodes
+  FocusNode nameFocus = FocusNode();
+  FocusNode emailFocus = FocusNode();
+  FocusNode passwordFocus = FocusNode();
+  FocusNode confirmPasswordFocus = FocusNode();
+
+// Focus state variables
+  bool isNameFocused = false;
+  bool isEmailFocused = false;
+  bool isPasswordFocused = false;
+  bool isConfirmPasswordFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameFocus.addListener(() {
+      setState(() {
+        isNameFocused = nameFocus.hasFocus;
+      });
+    });
+
+    emailFocus.addListener(() {
+      setState(() {
+        isEmailFocused = emailFocus.hasFocus;
+      });
+    });
+
+    passwordFocus.addListener(() {
+      setState(() {
+        isPasswordFocused = passwordFocus.hasFocus;
+      });
+    });
+
+    confirmPasswordFocus.addListener(() {
+      setState(() {
+        isConfirmPasswordFocused = confirmPasswordFocus.hasFocus;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    name.dispose();
+    email.dispose();
+    password.dispose();
+    confirmpassword.dispose();
+
+    nameFocus.dispose();
+    emailFocus.dispose();
+    passwordFocus.dispose();
+    confirmPasswordFocus.dispose();
+
+    super.dispose();
+  }
+
+
+
 
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -65,94 +125,114 @@ class _Register1State extends State<Register1> {
                         
                             //Textfield for login page
                             SizedBox(height: 15,),
-                            TextField(
-                              controller: name,
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                label: Text("Name", style: TextStyle(fontSize: 13.33,fontWeight:
-                                FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFFD4D4D4),), // inactive border
-                                  borderRadius: BorderRadius.circular(8),
+                            // Name Field
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: isNameFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                                  width: 1.5,
                                 ),
-
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFF339D44), width: 2), // active border
-                                  borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: name,
+                                focusNode: nameFocus,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  labelText: "Name",
+                                  labelStyle: TextStyle(fontSize: 13.33, fontWeight: FontWeight.w400,
+                                    fontFamily: 'Raleway', color: isNameFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                                  ),
                                 ),
+                              ),
+                            ),
+                            SizedBox(height: 15),
 
+                            // Textfield for email
+
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: isEmailFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: email,
+                                focusNode: emailFocus,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  labelText: "Email",
+                                  labelStyle: TextStyle(fontSize: 13.33, fontWeight: FontWeight.w400,
+                                    fontFamily: 'Raleway', color: isEmailFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+
+                            // textfeild for password
+
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: isPasswordFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: password,
+                                focusNode: passwordFocus,
+                                keyboardType: TextInputType.number,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  labelText: "Password",
+                                  labelStyle: TextStyle(fontSize: 13.33, fontWeight: FontWeight.w400,
+                                    fontFamily: 'Raleway', color: isPasswordFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+
+                           // Confirm Password Field
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: isConfirmPasswordFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: confirmpassword,
+                                focusNode: confirmPasswordFocus,
+                                keyboardType: TextInputType.number,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  labelText: "Confirm Password",
+                                  labelStyle: TextStyle(fontSize: 13.33, fontWeight: FontWeight.w400,
+                                    fontFamily: 'Raleway', color: isConfirmPasswordFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                                  ),
+                                ),
                               ),
                             ),
 
+                            SizedBox(height: 58,),
 
-                            SizedBox(height: 15,),
-                            TextField(
-                              controller: email,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                        
-                                label: Text("Email", style: TextStyle(fontSize: 13.33,fontWeight:
-                                FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-                        
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFFD4D4D4)), // inactive border
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                        
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFF339D44), width: 2), // active border
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                        
-                              ),
-                            ),
-                        
-                        
-                            SizedBox(height: 15,),
-                            TextField(
-                              controller: password,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-
-                                label: Text("Password", style: TextStyle(fontSize: 13.33,fontWeight:
-                                FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-                        
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFFD4D4D4)), // inactive border
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                        
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFF339D44), width: 2), // active border
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                        
-                              ),
-                            ),
-                        
-                            SizedBox(height: 15,),
-                            TextField(
-                              controller: confirmpassword,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-
-                                label: Text("Confirm Password", style: TextStyle(fontSize: 13.33,fontWeight:
-                                FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-                        
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFFD4D4D4)), // inactive border
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                        
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFF339D44), width: 2), // active border
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                        
-                              ),
-                            ),
-                            SizedBox(height: 60,),
 
 
 
