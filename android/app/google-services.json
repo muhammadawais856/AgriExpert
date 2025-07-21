@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "106364488558",
+    "project_id": "agriexpert-e10c2",
+    "storage_bucket": "agriexpert-e10c2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106364488558:android:ad672063542e8642f30f7f",
+        "android_client_info": {
+          "package_name": "com.example.agriexpert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5Mv5UI7sB-pKWM-TEVt76gKs5i1hfN2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

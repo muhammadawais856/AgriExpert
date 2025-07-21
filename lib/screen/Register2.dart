@@ -12,10 +12,54 @@ class Register2 extends StatefulWidget {
 
 class _Register2State extends State<Register2> {
   @override
+  // Controllers
+  TextEditingController qualification = TextEditingController();
+  TextEditingController address = TextEditingController();
+  TextEditingController contact = TextEditingController();
+
+// Dropdown
   String? selectedExpertise;
-  TextEditingController qualification=TextEditingController();
-  TextEditingController address=TextEditingController();
-  TextEditingController contact=TextEditingController();
+  List<String> expertiseList = ['Farming', 'Irrigation', 'Soil', 'Crop', 'Pest'];
+
+// Focus Nodes
+  FocusNode qualificationFocus = FocusNode();
+  FocusNode addressFocus = FocusNode();
+  FocusNode contactFocus = FocusNode();
+
+// Focus States
+  bool isQualificationFocused = false;
+  bool isAddressFocused = false;
+  bool isContactFocused = false;
+  bool isExpertiseFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    qualificationFocus.addListener(() {
+      setState(() => isQualificationFocused = qualificationFocus.hasFocus);
+    });
+    addressFocus.addListener(() {
+      setState(() => isAddressFocused = addressFocus.hasFocus);
+    });
+    contactFocus.addListener(() {
+      setState(() => isContactFocused = contactFocus.hasFocus);
+    });
+  }
+
+  @override
+  void dispose() {
+    qualification.dispose();
+    address.dispose();
+    contact.dispose();
+
+    qualificationFocus.dispose();
+    addressFocus.dispose();
+    contactFocus.dispose();
+
+    super.dispose();
+  }
+
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +86,7 @@ class _Register2State extends State<Register2> {
                 ),
 
                   child: Container(
-                    width: 315,
+                    width: 335,
                     height: 50,
                     alignment: Alignment.center,
                     color: Colors.white,
@@ -64,67 +108,76 @@ class _Register2State extends State<Register2> {
 
               )),
               SizedBox(height: 20,),
-              SizedBox(
-                height:60 ,
-                width: 320,
-                child: DropdownButtonFormField<String>(
-                  value: selectedExpertise,
-                  hint: Text(
-                    "Choose Expertise",
-                    style: TextStyle(fontSize: 13.33, fontWeight: FontWeight.w400, fontFamily: 'Raleway', color: Color(0xFFD4D4D4),),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isExpertiseFocused = true;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: isExpertiseFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-
-                  style: TextStyle(fontSize: 13.33, fontWeight: FontWeight.w400, fontFamily: 'Raleway', color: Colors.black,),
-
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8.0),
+                  child: DropdownButtonFormField<String>(
+                    value: selectedExpertise,
+                    icon: Icon(Icons.arrow_drop_down),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      labelText: "Expertise",
+                      labelStyle: TextStyle(
+                        color: isExpertiseFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                        fontFamily: 'Raleway', fontWeight: FontWeight.w400, fontSize: 13.33,
+                      ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFD4D4D4)),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFD4D4D4)),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedExpertise = value;
+                        isExpertiseFocused = false; // remove green after select
+                      });
+                    },
+                    items: expertiseList.map((item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
                   ),
-                  items: ['Math', 'Science', 'Programming']
-                      .map((e) => DropdownMenuItem(child: Text(e), value: e))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedExpertise = value;
-                    });
-                  },
                 ),
               ),
+
 
               SizedBox(height: 20,),
 
-              SizedBox(
-                height: 60,
-                width: 320,
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: isQualificationFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                    width: 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: TextField(
                   controller: qualification,
-                  keyboardType: TextInputType.name,
+                  focusNode: qualificationFocus,
                   decoration: InputDecoration(
-                    label: Text("Qualifications", style: TextStyle(fontSize: 13.33,fontWeight:
-                    FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFD4D4D4)), // inactive border
-                      borderRadius: BorderRadius.circular(8),
+                    border: InputBorder.none,
+                    labelText: "Qualification",
+                    labelStyle: TextStyle(
+                      color: isQualificationFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                      fontFamily: 'Raleway', fontWeight: FontWeight.w400, fontSize: 13.33,
                     ),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF339D44), width: 2), // active border
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-
                   ),
                 ),
               ),
+
               SizedBox(height: 20,),
 
               DottedBorder(
@@ -135,7 +188,7 @@ class _Register2State extends State<Register2> {
                   ),
 
                   child: Container(
-                    width: 315,
+                    width: 335,
                     height: 50,
                     alignment: Alignment.center,
                     color: Colors.white,
@@ -160,58 +213,63 @@ class _Register2State extends State<Register2> {
               SizedBox(height: 20,),
 
 
-              SizedBox(
-                height: 115,
-                width: 320,
-                child: TextFormField(
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: isAddressFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                    width: 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: TextField(
                   controller: address,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null, // Allows infinite lines
-                  minLines: 5,
+                  focusNode: addressFocus,
                   decoration: InputDecoration(
-                    label: Text("Address", style: TextStyle(fontSize: 13.33,fontWeight:
-                    FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFD4D4D4)), // inactive border
-                      borderRadius: BorderRadius.circular(8),
+                    border: InputBorder.none,
+                    labelText: "Address",
+                    labelStyle: TextStyle(
+                      color: isAddressFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                      fontFamily: 'Raleway',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13.33,
                     ),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF339D44), width: 2), // active border
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-
                   ),
                 ),
               ),
+
 
               SizedBox(height: 20,),
 
 
-              SizedBox(
-                height: 60,
-                width: 320,
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: isContactFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                    width: 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: TextField(
                   controller: contact,
+                  focusNode: contactFocus,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
-                    label: Text("Contact", style: TextStyle(fontSize: 13.33,fontWeight:
-                    FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFD4D4D4)), // inactive border
-                      borderRadius: BorderRadius.circular(8),
+                    border: InputBorder.none,
+                    labelText: "Contact",
+                    labelStyle: TextStyle(
+                      color: isContactFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                      fontFamily: 'Raleway',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13.33,
                     ),
-
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFF339D44), width: 2), // active border
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-
                   ),
                 ),
               ),
+
 
               SizedBox(height: 47,),
 

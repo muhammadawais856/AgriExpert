@@ -1,6 +1,8 @@
+import 'package:agriexpert/Services/auth.dart';
 import 'package:agriexpert/screen/Register2.dart';
 import 'package:agriexpert/screen/login.dart';
 import 'package:flutter/material.dart';
+import 'package:string_validator/string_validator.dart';
 
 class Register1 extends StatefulWidget {
   const Register1({super.key});
@@ -10,6 +12,8 @@ class Register1 extends StatefulWidget {
 }
 
 class _Register1State extends State<Register1> {
+
+  bool isLoading = false;
 
   @override
   // Controllers
@@ -233,19 +237,73 @@ class _Register1State extends State<Register1> {
 
                             SizedBox(height: 58,),
 
+                         //button for login , validation and firebase signup authentication
 
-
-
-                            Center(
+                         isLoading? Center(
+                           child: CircularProgressIndicator(),
+                            )
+                            :Center(
                               child: SizedBox(
                                 height: 60,
                                 width: 315,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => Register2()),
-                                    );
+                                  onPressed: () async {
+                                    // validation for textfield
+                                    if(name.text.isEmpty){
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Name Cannot be empty \n Please enter your name"),));
+                                      return;
+                                    }
+                                    if(email.text.isEmpty){
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Email cannot be empty"),));
+                                      return;
+                                    }
+                                    if(!email.text.isEmail){
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter valid email"),));
+                                      return;
+                                    }
+                                    if(password.text.isEmpty){
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("password cannot be empty"),));
+                                      return;
+                                    }
+                                    if(password.text.length<6){
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("password must be greater than 6 digits"),));
+                                      return;
+                                    }
+                                    if(confirmpassword.text.isEmpty){
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("password cannot be empty"),));
+                                      return;
+                                    }
+                                    if(confirmpassword.text.length<6){
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("password must be greater than 6 digits"),));
+                                      return;
+                                    }
+                                    if (password.text != confirmpassword.text) {
+                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Passwords are not same \n please enter same password")),);
+                                      return;
+                                    }
+
+                                    // firebase store
+                                    try {
+                                      isLoading=true;
+                                      setState(() {
+
+                                      });
+                                      await AuthServies().signupUser(email: email.text, password: password.text).then((val){
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => Register2()),
+                                        );
+                                      });
+
+                                    }catch(e){
+                                      isLoading=false;
+                                      setState(() {});
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(content: Text(e.toString())));
+
+
+                                    }
+
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Color(0xFF339D44), // Button color
@@ -278,6 +336,8 @@ class _Register1State extends State<Register1> {
                         child: Align(
                           alignment: Alignment.topLeft,
                           child: TextButton(onPressed: (){
+
+                            // navigations
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => login()),

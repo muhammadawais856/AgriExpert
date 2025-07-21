@@ -1,4 +1,5 @@
 
+import 'package:agriexpert/Services/auth.dart';
 import 'package:agriexpert/screen/Register1.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,38 @@ class forgotpassword extends StatefulWidget {
 
 class _forgotpasswordState extends State<forgotpassword> {
   @override
-  TextEditingController email=TextEditingController();
+  bool isLoading = false;
+  // Controllers
+  TextEditingController email = TextEditingController();
+
+// FocusNodes
+  FocusNode emailFocus = FocusNode();
+
+// Focus state variables
+  bool isEmailFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+
+    emailFocus.addListener(() {
+      setState(() {
+        isEmailFocused = emailFocus.hasFocus;
+      });
+    });
+
+
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+
+    emailFocus.dispose();
+
+    super.dispose();
+  }
 
 
   Widget build(BuildContext context) {
@@ -59,23 +91,27 @@ class _forgotpasswordState extends State<forgotpassword> {
 
 
                             SizedBox(height: 24,),
-                            TextField(
-                              controller: email,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                label: Text("Email", style: TextStyle(fontSize: 13.33,fontWeight:
-                                FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFFD4D4D4)), // inactive border
-                                  borderRadius: BorderRadius.circular(8),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: isEmailFocused ? Color(0xFF339D44) : Color(0xFFD4D4D4),
+                                  width: 1.5,
                                 ),
-
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Color(0xFF339D44), width: 2), // active border
-                                  borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: email,
+                                focusNode: emailFocus,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  labelText: "Email",
+                                  labelStyle: TextStyle(fontSize: 13.33, fontWeight: FontWeight.w400,
+                                    fontFamily: 'Raleway', color: isEmailFocused ? Color(0xFF339D44) : Color(0xFFB4B4B4),
+                                  ),
                                 ),
-
                               ),
                             ),
 
@@ -84,12 +120,43 @@ class _forgotpasswordState extends State<forgotpassword> {
 
 
 
-                            Center(
+                            isLoading? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                            :Center(
                               child: SizedBox(
                                 height: 60,
                                 width: 315,
                                 child: ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    if (email.text.isEmpty) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text("Email cannot be empty.")));
+                                      return;
+                                    }
+                                    try{
+                                      isLoading=true;
+                                      setState(() {
+
+                                      });
+                                      await AuthServies().forgotpassword(email.text).then((val){
+                                        isLoading=false;
+                                        setState(() {
+
+                                        });
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text("Password reset link has been send to your email account")));
+
+                                      });
+
+
+                                    }catch(e){
+                                      isLoading = false;
+                                      setState(() {});
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(content: Text(e.toString())));
+
+                                    }
                                     // Navigator.push(
                                     //   context,
                                     //   MaterialPageRoute(builder: (context) => Register2()),

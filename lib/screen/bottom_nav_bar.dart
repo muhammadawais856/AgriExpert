@@ -24,11 +24,11 @@ class _bottomnavbarState extends State<bottomnavbar> {
   ];
 
   final List<String> icons = [
-    'Assets/images/home_icon.png',
-    'Assets/images/qes.png',
-    'Assets/images/video_icon.png',
-    'Assets/images/message_icon.png',
-    'Assets/images/profile_icon.png',
+    'Assets/images/navbarhome.png',
+    'Assets/images/navbarquestion.png',
+    'Assets/images/navbarvideo.png',
+    'Assets/images/navbarmessage.png',
+    'Assets/images/navbarprofile.png',
   ];
 
   @override

@@ -6,10 +6,13 @@ import 'package:agriexpert/screen/no_internet.dart';
 import 'package:agriexpert/screen/no_data_found.dart';
 import 'package:agriexpert/screen/question.dart';
 import 'package:agriexpert/screen/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -25,8 +28,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: splash_screen(),
-      //bottomnavbar(),
+      home: //splash_screen(),
+      bottomnavbar(),
       //connection_lost()
 
 
