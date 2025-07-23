@@ -1,4 +1,5 @@
 import 'package:agriexpert/screen/Question_search2.dart';
+import 'package:agriexpert/screen/Register2.dart';
 import 'package:agriexpert/screen/bottom_nav_bar.dart';
 import 'package:agriexpert/screen/connection_lost.dart';
 import 'package:agriexpert/screen/four_zero_four.dart';
@@ -28,8 +29,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: //splash_screen(),
-      bottomnavbar(),
+      home: splash_screen(),
+      //bottomnavbar(),
       //connection_lost()
 
 

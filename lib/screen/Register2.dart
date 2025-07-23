@@ -1,7 +1,10 @@
 
+import 'dart:io';
+
 import 'package:agriexpert/screen/login.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Register2 extends StatefulWidget {
   const Register2({super.key});
@@ -12,6 +15,36 @@ class Register2 extends StatefulWidget {
 
 class _Register2State extends State<Register2> {
   @override
+
+  File? ProfileImage;
+  String? ProfileImageName;
+
+  File? degreeImage;
+  String? degreeImageName;
+
+  Future<void> pickimage1() async{
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if(image!=null){
+      setState(() {
+        ProfileImage = File(image.path);
+        ProfileImageName= image.name;
+      });
+    }
+  }
+  Future<void> pickimage2() async{
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if(image!=null){
+      setState(() {
+        degreeImage = File(image.path);
+        degreeImageName= image.name;
+      });
+    }
+  }
+
   // Controllers
   TextEditingController qualification = TextEditingController();
   TextEditingController address = TextEditingController();
@@ -85,6 +118,7 @@ class _Register2State extends State<Register2> {
                   dashPattern: [9,9],
                 ),
 
+                  // profile image upload container
                   child: Container(
                     width: 335,
                     height: 50,
@@ -95,10 +129,11 @@ class _Register2State extends State<Register2> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Upload Profile Image", style: TextStyle(fontSize: 13.33,fontWeight:
+                          Text(ProfileImageName ?? "Upload Profile Image", style: TextStyle(fontSize: 13.33,fontWeight:
                           FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFF292929),),),
 
                           GestureDetector(onTap: (){
+                            pickimage1();
                           },
                               child: Image.asset("Assets/images/upload.jpg", width: 18, height: 20,)),
                         ],
@@ -107,7 +142,10 @@ class _Register2State extends State<Register2> {
                     ),
 
               )),
+
               SizedBox(height: 20,),
+
+              // expertise dropdown
               GestureDetector(
                 onTap: () {
                   setState(() {
@@ -197,10 +235,11 @@ class _Register2State extends State<Register2> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Upload Latest Degree Image", style: TextStyle(fontSize: 13.33,fontWeight:
+                          Text(degreeImageName ?? "Upload Latest Degree Image", style: TextStyle(fontSize: 13.33,fontWeight:
                           FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFF292929),),),
 
                           GestureDetector(onTap: (){
+                            pickimage2();
                           },
                               child: Image.asset("Assets/images/upload.jpg", width: 18, height: 20,)),
                         ],
@@ -282,6 +321,39 @@ class _Register2State extends State<Register2> {
                   width: 315,
                   child: ElevatedButton(
                     onPressed: () {
+                      // validations
+
+                      if (ProfileImage == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your profile image")),);
+                        return;
+                      }
+
+                      if(selectedExpertise == null || selectedExpertise!.isEmpty){
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please choose any Expertise"),));
+                        return;
+                      }
+                      if(qualification.text.isEmpty){
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Qualification"),));
+                        return;
+                      }
+                      if (degreeImage == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your degree image")),);
+                        return;
+                      }
+                      if(address.text.isEmpty){
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Address"),));
+                        return;
+                      }
+                      if(contact.text.isEmpty){
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your contact number"),));
+                        return;
+                      }
+                      if(contact.text.length!=11){
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Contact number must be 11 digit"),));
+                        return;
+                      }
+
+
                       showDialog(context: context,
                           barrierDismissible: false,
                           builder: (context){
