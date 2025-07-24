@@ -336,7 +336,7 @@ class _Register2State extends State<Register2> {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Qualification"),));
                         return;
                       }
-                      if (degreeImage == null) {
+                      if (ProfileImage == null) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your degree image")),);
                         return;
                       }

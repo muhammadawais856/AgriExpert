@@ -4,6 +4,9 @@ import 'package:agriexpert/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
 
+import '../Services/User.dart';
+import '../models/UserModel.dart';
+
 class Register1 extends StatefulWidget {
   const Register1({super.key});
 
@@ -284,16 +287,26 @@ class _Register1State extends State<Register1> {
 
                                     // firebase store
                                     try {
-                                      isLoading=true;
-                                      setState(() {
+                                      isLoading = true;
+                                      setState(() {});
 
-                                      });
-                                      await AuthServies().signupUser(email: email.text, password: password.text).then((val){
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => Register2()),
-                                        );
-                                      });
+                                      await AuthServies().signupUser(email: email.text, password: password.text);
+
+                                      // Create a user model with name and email
+                                      UserModel user = UserModel(
+                                        name: name.text,
+                                        email: email.text,
+                                        createdAt: DateTime.now().toString(),
+                                      );
+
+                                      // Save to Firestore
+                                      await UserService().createUser(user);
+
+                                      // Navigate to Register2
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => Register2()),
+                                      );
 
                                     }catch(e){
                                       isLoading=false;
@@ -303,6 +316,7 @@ class _Register1State extends State<Register1> {
 
 
                                     }
+
 
                                   },
                                   style: ElevatedButton.styleFrom(
