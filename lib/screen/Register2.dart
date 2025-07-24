@@ -6,15 +6,42 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../Services/User.dart';
+import '../models/UserModel.dart';
+import 'package:uuid/uuid.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+
+
+
 class Register2 extends StatefulWidget {
-  const Register2({super.key});
+  final String name;
+  final String email;
+  const Register2({super.key, required this.name, required this.email});
+
 
   @override
   State<Register2> createState() => _Register2State();
 }
 
+
 class _Register2State extends State<Register2> {
   @override
+
+  Future<String> uploadImageToFirebase(File imageFile) async {
+    String fileId = Uuid().v4();
+    firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+        .ref()
+        .child('user_images')
+        .child('$fileId.jpg');
+
+    firebase_storage.UploadTask uploadTask = ref.putFile(imageFile);
+    firebase_storage.TaskSnapshot snapshot = await uploadTask;
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+
+
 
   File? ProfileImage;
   String? ProfileImageName;
@@ -320,86 +347,116 @@ class _Register2State extends State<Register2> {
                   height: 60,
                   width: 315,
                   child: ElevatedButton(
-                    onPressed: () {
-                      // validations
+                    onPressed: () async {
+                      try{
+                        // validations
 
-                      if (ProfileImage == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your profile image")),);
-                        return;
-                      }
+                        if (ProfileImage == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your profile image")),);
+                          return;
+                        }
 
-                      if(selectedExpertise == null || selectedExpertise!.isEmpty){
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please choose any Expertise"),));
-                        return;
-                      }
-                      if(qualification.text.isEmpty){
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Qualification"),));
-                        return;
-                      }
-                      if (ProfileImage == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your degree image")),);
-                        return;
-                      }
-                      if(address.text.isEmpty){
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Address"),));
-                        return;
-                      }
-                      if(contact.text.isEmpty){
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your contact number"),));
-                        return;
-                      }
-                      if(contact.text.length!=11){
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Contact number must be 11 digit"),));
-                        return;
-                      }
+                        if(selectedExpertise == null || selectedExpertise!.isEmpty){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please choose any Expertise"),));
+                          return;
+                        }
+                        if(qualification.text.isEmpty){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Qualification"),));
+                          return;
+                        }
+                        if (ProfileImage == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your degree image")),);
+                          return;
+                        }
+                        if(address.text.isEmpty){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Address"),));
+                          return;
+                        }
+                        if(contact.text.isEmpty){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your contact number"),));
+                          return;
+                        }
+                        if(contact.text.length!=11){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Contact number must be 11 digit"),));
+                          return;
+                        }
+
+                        String profileUrl = await uploadImageToFirebase(ProfileImage!);
+                        String degreeUrl = await uploadImageToFirebase(degreeImage!);
+
+                        // Create user model
+                        UserModel model = UserModel(
+                          name: widget.name,//pass from register 1
+                          email: widget.email,
+
+                          contact: contact.text,
+                          address: address.text,
+                          qualifictaion: qualification.text,
+                          profileImage: profileUrl,
+                          degreeImage: degreeUrl,
+                          expertise: selectedExpertise!,
+                        );
+
+                        // Save in Firestore
+                        await UserService().createUser(model);
 
 
-                      showDialog(context: context,
-                          barrierDismissible: false,
-                          builder: (context){
-                            return AlertDialog(
-                              backgroundColor: Colors.white,
-                              title: Column(
-                                children: [
-                                  Image.asset("Assets/images/tick.jpg", width: 48, height: 48,),
-                                  Text("Account Created", style: TextStyle(fontSize: 23.03 ,fontWeight:
-                                  FontWeight.bold,fontFamily: 'Raleway',color: Color(0xFF292929),),),
-                                ],
-                              ),
-                              content: Padding(
-                                padding: const EdgeInsets.only(left: 23.5, right: 23.5),
-                                child: Text("You can now access your account", style: TextStyle(fontSize: 13.33 ,fontWeight:
-                                FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-                              ),
 
-                              actions: [
-                                Center(
-                                  child: SizedBox(
-                                    height: 60,
-                                    width: 255,
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(builder: (context) => login()),
-                                        );
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xFF339D44), // Button color
-                                        foregroundColor: Color(0xFFF4F4F4), // Text color
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10),
+
+                        showDialog(context: context,
+                            barrierDismissible: false,
+                            builder: (context){
+                              return AlertDialog(
+                                backgroundColor: Colors.white,
+                                title: Column(
+                                  children: [
+                                    Image.asset("Assets/images/tick.jpg", width: 48, height: 48,),
+                                    Text("Account Created", style: TextStyle(fontSize: 23.03 ,fontWeight:
+                                    FontWeight.bold,fontFamily: 'Raleway',color: Color(0xFF292929),),),
+                                  ],
+                                ),
+                                content: Padding(
+                                  padding: const EdgeInsets.only(left: 23.5, right: 23.5),
+                                  child: Text("You can now access your account", style: TextStyle(fontSize: 13.33 ,fontWeight:
+                                  FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
+                                ),
+
+                                actions: [
+                                  Center(
+                                    child: SizedBox(
+                                      height: 60,
+                                      width: 255,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => login()),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color(0xFF339D44), // Button color
+                                          foregroundColor: Color(0xFFF4F4F4), // Text color
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, fontFamily: 'Raleway',
+                                          ),
                                         ),
-                                        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, fontFamily: 'Raleway',
-                                        ),
+                                        child: Text("Login"),
                                       ),
-                                      child: Text("Login"),
                                     ),
                                   ),
-                                ),
-                              ],
-                            );
-                          });
+                                ],
+                              );
+                            });
+                      }catch(e){
+
+                        setState(() {});
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text(e.toString())));
+
+
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF339D44), // Button color

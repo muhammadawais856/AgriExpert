@@ -305,7 +305,7 @@ class _Register1State extends State<Register1> {
                                       // Navigate to Register2
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => Register2()),
+                                        MaterialPageRoute(builder: (context) => Register2(name: name.text,email: email.text,)),
                                       );
 
                                     }catch(e){
