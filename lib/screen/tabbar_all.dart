@@ -36,7 +36,7 @@ class _tabbar_allState extends State<tabbar_all> {
         time: q.createdAt != null ? timeAgo((q.createdAt as Timestamp).toDate()) : 'Some time ago',
         title: q.title ?? 'No title',
         contentImage: q.image,
-        answerRoute: answered(docId: q.docId!), // always assign route
+        answerRoute: Answered(docId: q.docId!), // always assign route
         status: q.status ?? "pending", // <-- Assign status
 
       )).toList();
@@ -99,7 +99,7 @@ class _tabbar_allState extends State<tabbar_all> {
                             onPressed: () async {
                               await Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => answered(docId: model[i].docId!)),
+                                MaterialPageRoute(builder: (context) => Answered(docId: model[i].docId!)),
                               );
                               fetchQuestions(); // 👈 Refresh after coming back
                             },
