@@ -1,13 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class answered extends StatefulWidget {
-  const answered({super.key});
+  final String docId;
+  const answered({super.key,required this.docId});
 
   @override
   State<answered> createState() => _answeredState();
 }
 
 class _answeredState extends State<answered> {
+
   @override
   TextEditingController answer=TextEditingController();
   Widget build(BuildContext context) {
@@ -91,12 +94,19 @@ class _answeredState extends State<answered> {
                   height: 60,
                   width: 315,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(builder: (context) => ),
-                      // );
+                    onPressed: () async {
+                      if (answer.text.trim().isEmpty) return;
+
+                      // Update answer and status in Firestore
+                      await FirebaseFirestore.instance
+                          .collection('questions')
+                          .doc(widget.docId)
+                          .update({
+                        'answer': answer.text.trim(),
+                        'status': 'answered',
+                      });
+
+                      Navigator.pop(context); // Go back
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFF339D44), // Button color

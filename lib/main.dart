@@ -29,8 +29,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: splash_screen(),
-      //bottomnavbar(),
+      home: //splash_screen(),
+      bottomnavbar(),
       //connection_lost()
 
 

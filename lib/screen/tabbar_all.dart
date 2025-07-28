@@ -1,6 +1,9 @@
 
+import 'package:agriexpert/Services/questions.dart';
+import 'package:agriexpert/models/QuestionModel.dart';
 import 'package:agriexpert/models/all_model.dart';
 import 'package:agriexpert/screen/answered.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class tabbar_all extends StatefulWidget {
@@ -12,37 +15,51 @@ class tabbar_all extends StatefulWidget {
 
 class _tabbar_allState extends State<tabbar_all> {
   @override
-  List<AllModel> model=[
-      AllModel(
-        profileImage: 'Assets/images/profile1.jpg',
-        name: 'Fareeha Sadaqat',
-        time: '10 mins ago',
-        title: 'I have an issue regarding this vehicle.',
-        contentImage: 'Assets/images/tractor.jpg',
+  List<AllModel> model = [];
+  final QuestionService _questionService = QuestionService();
+  bool isLoading = true;
 
-      ),
-    AllModel(
-      profileImage: 'Assets/images/profile2.jpg',
-      name: 'Muhammad Ali Nizami',
-      time: '20 mins ago',
-      title: 'What is the process of purchasing Vehicle from hardware store?',
-      answerRoute: answered(),
+  @override
+  void initState() {
+    super.initState();
+    fetchQuestions();
+  }
+  void fetchQuestions() async {
+    List<QuestionModel> questions = await _questionService.getAllQuestions();
+    print("Fetched questions: ${questions.length}");
 
-    ),
-    AllModel(
-      profileImage: 'Assets/images/profile3.jpg',
-      name: 'Masab Mehmood',
-      time: '15 mins ago',
-      title: 'What is the process of purchasing Vehicle from hardware store?',
-    ),
+    setState(() {
+      model = questions.map((q) => AllModel(
+        docId: q.docId!,
+        profileImage: q.autherImage ?? 'Assets/images/profile1.jpg',
+        name: q.autherName ?? 'Anonymous',
+        time: q.createdAt != null ? timeAgo((q.createdAt as Timestamp).toDate()) : 'Some time ago',
+        title: q.title ?? 'No title',
+        contentImage: q.image,
+        answerRoute: answered(docId: q.docId!), // always assign route
+        status: q.status ?? "pending", // <-- Assign status
+
+      )).toList();
+      isLoading=false;
+    });
+
+  }
+  String timeAgo(DateTime date) {
+    final Duration diff = DateTime.now().difference(date);
+    if (diff.inMinutes < 1) return "just now";
+    if (diff.inMinutes < 60) return "${diff.inMinutes} mins ago";
+    if (diff.inHours < 24) return "${diff.inHours} hours ago";
+    return "${diff.inDays} days ago";
+  }
 
 
 
-  ];
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()):
+      Column(
         children: [
           SizedBox(height: 30,),
           Expanded(
@@ -77,18 +94,28 @@ class _tabbar_allState extends State<tabbar_all> {
                             ),
                           ),
 
-                      TextButton(onPressed: (){
-                        if (model[i].answerRoute != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => model[i].answerRoute!),
-                          );
-                        }
+                          model[i].status == "pending"
+                              ? TextButton(
+                            onPressed: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => answered(docId: model[i].docId!)),
+                              );
+                              fetchQuestions(); // 👈 Refresh after coming back
+                            },
+                            child: Text(
+                              "Answered",
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Raleway',
+                                color: Color(0xFF339D44),
+                              ),
+                            ),
+                          )
+                              : SizedBox.shrink(),
 
-                      },
-                          child: Text("Answered",style: TextStyle(fontSize: 11,fontWeight:
-                          FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFF339D44),),),
-                      )
+
 
 
 
@@ -106,9 +133,15 @@ class _tabbar_allState extends State<tabbar_all> {
                     SizedBox(height: 5,),
 
                     if (model[i].contentImage != null)
-                      Image.asset(model[i].contentImage!,
-                          width: double.infinity,
-                          fit: BoxFit.cover, height: 179),
+                      Image.asset(
+                        model[i].contentImage!,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        height: 179,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Text("Failed to load image");
+                        },
+                      ),
 
 
 

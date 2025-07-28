@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:agriexpert/screen/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,7 +17,9 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 class Register2 extends StatefulWidget {
   final String name;
   final String email;
-  const Register2({super.key, required this.name, required this.email});
+  final String docId;
+  final DateTime createdAt;
+  const Register2({super.key, required this.name, required this.email, required this.docId,required this.createdAt});
 
 
   @override
@@ -27,18 +30,20 @@ class Register2 extends StatefulWidget {
 class _Register2State extends State<Register2> {
   @override
 
-  Future<String> uploadImageToFirebase(File imageFile) async {
-    String fileId = Uuid().v4();
-    firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
-        .ref()
-        .child('user_images')
-        .child('$fileId.jpg');
+  // Future<String> uploadImageToFirebase(File imageFile) async {
+  //   String fileId = Uuid().v4();
+  //   firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+  //       .ref()
+  //       .child('user_images')
+  //       .child('$fileId.jpg');
+  //
+  //   firebase_storage.UploadTask uploadTask = ref.putFile(imageFile);
+  //   firebase_storage.TaskSnapshot snapshot = await uploadTask;
+  //   String downloadUrl = await snapshot.ref.getDownloadURL();
+  //   return downloadUrl;
+  // }
+  late final String docId;
 
-    firebase_storage.UploadTask uploadTask = ref.putFile(imageFile);
-    firebase_storage.TaskSnapshot snapshot = await uploadTask;
-    String downloadUrl = await snapshot.ref.getDownloadURL();
-    return downloadUrl;
-  }
 
 
 
@@ -95,6 +100,8 @@ class _Register2State extends State<Register2> {
   @override
   void initState() {
     super.initState();
+
+    docId = widget.docId;
 
     qualificationFocus.addListener(() {
       setState(() => isQualificationFocused = qualificationFocus.hasFocus);
@@ -351,10 +358,10 @@ class _Register2State extends State<Register2> {
                       try{
                         // validations
 
-                        if (ProfileImage == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your profile image")),);
-                          return;
-                        }
+                        // if (ProfileImage == null) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your profile image")),);
+                        //   return;
+                        // }
 
                         if(selectedExpertise == null || selectedExpertise!.isEmpty){
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please choose any Expertise"),));
@@ -364,10 +371,10 @@ class _Register2State extends State<Register2> {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Qualification"),));
                           return;
                         }
-                        if (ProfileImage == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your degree image")),);
-                          return;
-                        }
+                        // if (ProfileImage == null) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your degree image")),);
+                        //   return;
+                        // }
                         if(address.text.isEmpty){
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Address"),));
                           return;
@@ -380,22 +387,31 @@ class _Register2State extends State<Register2> {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Contact number must be 11 digit"),));
                           return;
                         }
+                        Future<void> createUser(UserModel model, String docId) async {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(docId) // <- Use the known docId
+                              .set(model.toJson());
+                        }
 
-                        String profileUrl = await uploadImageToFirebase(ProfileImage!);
-                        String degreeUrl = await uploadImageToFirebase(degreeImage!);
+                        // String profileUrl = await uploadImageToFirebase(ProfileImage!);
+                        // String degreeUrl = await uploadImageToFirebase(degreeImage!);
 
                         // Create user model
                         UserModel model = UserModel(
                           name: widget.name,//pass from register 1
                           email: widget.email,
+                          docId: widget.docId,
+                          createdAt: widget.createdAt.toString(),
 
                           contact: contact.text,
                           address: address.text,
                           qualifictaion: qualification.text,
-                          profileImage: profileUrl,
-                          degreeImage: degreeUrl,
+                          // profileImage: profileUrl,
+                          // degreeImage: degreeUrl,
                           expertise: selectedExpertise!,
                         );
+
 
                         // Save in Firestore
                         await UserService().createUser(model);

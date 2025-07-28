@@ -7,14 +7,20 @@ class AllModel {
   final String title;
   final String? contentImage;
   final Widget? answerRoute;
+  final String status;
+  final String docId;
 
   AllModel({
     required this.profileImage,
     required this.name,
     required this.time,
     required this.title,
+    required this.status,
     this.contentImage,
     this.answerRoute,
+    required this.docId,
+
+
   });
 }
 

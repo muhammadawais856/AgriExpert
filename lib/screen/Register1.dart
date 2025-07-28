@@ -1,6 +1,7 @@
 import 'package:agriexpert/Services/auth.dart';
 import 'package:agriexpert/screen/Register2.dart';
 import 'package:agriexpert/screen/login.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:string_validator/string_validator.dart';
 
@@ -292,20 +293,24 @@ class _Register1State extends State<Register1> {
 
                                       await AuthServies().signupUser(email: email.text, password: password.text);
 
+                                      final docRef = FirebaseFirestore.instance.collection('users').doc();
+                                      final docId = docRef.id;
+
                                       // Create a user model with name and email
                                       UserModel user = UserModel(
                                         name: name.text,
                                         email: email.text,
                                         createdAt: DateTime.now().toString(),
+                                        docId: docId,
                                       );
-
+                                      await docRef.set(user.toJson());
                                       // Save to Firestore
                                       await UserService().createUser(user);
 
                                       // Navigate to Register2
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => Register2(name: name.text,email: email.text,)),
+                                        MaterialPageRoute(builder: (context) => Register2(name: name.text,email: email.text,docId: docId,createdAt: DateTime.now(),)),
                                       );
 
                                     }catch(e){

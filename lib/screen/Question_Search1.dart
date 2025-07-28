@@ -19,6 +19,8 @@ class _questionsearch1State extends State<questionsearch1> {
       name: 'Muhammad Ali Nizami',
       time: '20 mins ago',
       title: 'What is the process of purchasing Vehicle from hardware store?',
+      status: "",
+      docId: ""
 
     ),
     AllModel(
@@ -26,6 +28,8 @@ class _questionsearch1State extends State<questionsearch1> {
       name: 'Masab Mehmood',
       time: '15 mins ago',
       title: 'What is the process of purchasing Vehicle from hardware store?',
+      status: "",
+      docId: ""
     ),
 
 
