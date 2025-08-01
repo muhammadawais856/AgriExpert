@@ -6,11 +6,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../Services/User.dart';
 import '../models/UserModel.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import '../Services/ImageUploadService.dart';
 
 
 
@@ -358,10 +358,10 @@ class _Register2State extends State<Register2> {
                       try{
                         // validations
 
-                        // if (ProfileImage == null) {
-                        //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your profile image")),);
-                        //   return;
-                        // }
+                        if (ProfileImage == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your profile image")),);
+                          return;
+                        }
 
                         if(selectedExpertise == null || selectedExpertise!.isEmpty){
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please choose any Expertise"),));
@@ -371,10 +371,10 @@ class _Register2State extends State<Register2> {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Qualification"),));
                           return;
                         }
-                        // if (ProfileImage == null) {
-                        //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your degree image")),);
-                        //   return;
-                        // }
+                        if (ProfileImage == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload your degree image")),);
+                          return;
+                        }
                         if(address.text.isEmpty){
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter your Address"),));
                           return;
@@ -394,8 +394,9 @@ class _Register2State extends State<Register2> {
                               .set(model.toJson());
                         }
 
-                        // String profileUrl = await uploadImageToFirebase(ProfileImage!);
-                        // String degreeUrl = await uploadImageToFirebase(degreeImage!);
+                        ImageUploadService imageService = ImageUploadService();
+                        String profileUrl = await imageService.uploadImage(ProfileImage!);
+                        String degreeUrl = await imageService.uploadImage(degreeImage!);
 
                         // Create user model
                         UserModel model = UserModel(
@@ -407,8 +408,8 @@ class _Register2State extends State<Register2> {
                           contact: contact.text,
                           address: address.text,
                           qualifictaion: qualification.text,
-                          // profileImage: profileUrl,
-                          // degreeImage: degreeUrl,
+                          profileImage: profileUrl,
+                          degreeImage: degreeUrl,
                           expertise: selectedExpertise!,
                         );
 
