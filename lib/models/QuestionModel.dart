@@ -6,7 +6,7 @@ class QuestionModel {
   final String? autherImage;
   final String? title;
   final String? image;
-  final String? answer; // ✅ ADD THIS LINE
+  final String? answer;
   final String status;
   final Timestamp? createdAt;
 
@@ -16,7 +16,7 @@ class QuestionModel {
     this.autherImage,
     this.title,
     this.image,
-    this.answer, // ✅ ADD THIS LINE
+    this.answer,
     this.createdAt,
     required this.status,
   });
@@ -28,7 +28,7 @@ class QuestionModel {
       autherImage: map['autherImage'],
       title: map['title'],
       image: map['image'],
-      answer: map['answer'], // ✅ ADD THIS LINE
+      answer: map['answer'],
       status: map['status'] ?? 'pending',
       createdAt: map['createdAt'],
     );
@@ -42,7 +42,7 @@ class QuestionModel {
       autherImage: data['autherImage'],
       title: data['title'],
       image: data['image'],
-      answer: data['answer'], // ✅ ADD THIS LINE
+      answer: data['answer'],
       status: data['status'] ?? 'pending',
       createdAt: data['createdAt'],
     );
@@ -55,7 +55,7 @@ class QuestionModel {
       'autherImage': autherImage,
       'title': title,
       'image': image,
-      'answer': answer, // ✅ ADD THIS LINE
+      'answer': answer,
       'status': status,
       'createdAt': createdAt,
     };

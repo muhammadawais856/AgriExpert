@@ -150,17 +150,7 @@ class _tabbar_answeredState extends State<tabbar_answered> {
                   },
                 ),
               ],
-              if (question.answer != null) ...[
-                SizedBox(height: 10),
-                Text(
-                  "Answer:",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
-                Text(question.answer!),
-              ],
+              
               SizedBox(height: 24),
 
             ],

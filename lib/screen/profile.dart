@@ -5,8 +5,12 @@ import 'package:agriexpert/screen/bottom_nav_bar.dart';
 import 'package:agriexpert/screen/edit_profile.dart';
 import 'package:flutter/material.dart';
 
+import '../Services/User.dart';
+import '../models/UserModel.dart';
+
 class profile extends StatefulWidget {
-   const profile({super.key});
+  final String userId;
+  const profile({super.key,required this.userId});
  
    @override
    State<profile> createState() => _profileState();
@@ -41,6 +45,24 @@ class profile extends StatefulWidget {
        starCount: 2,
      ),
    ];
+   final UserService _userService = UserService();
+   UserModel? user;
+   bool isLoading = true;
+
+   @override
+   void initState() {
+     super.initState();
+     print("🟢 PROFILE: Loading user with ID: ${widget.userId}");
+     loadUser();
+   }
+
+   Future<void> loadUser() async {
+     user = await _userService.getCurrentUser(widget.userId);
+     setState(() {
+       isLoading = false;
+     });
+   }
+
    Widget build(BuildContext context) {
      return Scaffold(
        backgroundColor: Colors.white,
@@ -64,23 +86,28 @@ class profile extends StatefulWidget {
          padding: const EdgeInsets.only(right: 30, left: 30, top: 10),
          child: Column(
            children: [
-             Center(
-               child: ClipOval(
-                 child: Image.asset(
-                   'Assets/images/profileimage.jpg',
-                   width: 82,   // set custom width
-                   height: 82,  // set custom height
-                   fit: BoxFit.cover,
-                 ),
-               ),
-             ),
-             SizedBox(height: 10,),
+         user == null
+         ? const Center(child: CircularProgressIndicator())
+           : Column(
+               children: [
+                   Center(
+                     child: ClipOval(
+                            child: user!.profileImage != null && user!.profileImage!.isNotEmpty
+                        ? Image.network(
+                          user!.profileImage!, width: 82, height: 82, fit: BoxFit.cover,)
+                        : Image.asset('Assets/images/profileimage.jpg', width: 82, height: 82, fit: BoxFit.cover,),),),
 
-             Text("Muhammad Wajahat", style: TextStyle(fontSize: 16,fontWeight:
-             FontWeight.w500,fontFamily: 'Raleway',color: Color(0xFF292929),),),
-             SizedBox(height: 10,),
-             Text("mwajahat.038@gmail.com", style: TextStyle(fontSize: 11.11,fontWeight:
-             FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFF339D44),),),
+                 const SizedBox(height: 10),
+
+                 Text(
+                   user!.name ?? 'No Name',
+                   style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500,
+                     fontFamily: 'Raleway', color: Color(0xFF292929),),),
+
+                 const SizedBox(height: 10),
+
+                 Text(user!.email ?? 'No Email', style: const TextStyle(fontSize: 11.11, fontWeight: FontWeight.w400,
+                   fontFamily: 'Raleway', color: Color(0xFF339D44),),),],),
 
              SizedBox(height: 18,),
 

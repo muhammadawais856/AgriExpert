@@ -3,6 +3,7 @@ import 'package:agriexpert/screen/message.dart';
 import 'package:agriexpert/screen/profile.dart';
 import 'package:agriexpert/screen/question.dart';
 import 'package:agriexpert/screen/trending.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class bottomnavbar extends StatefulWidget {
@@ -14,13 +15,37 @@ class bottomnavbar extends StatefulWidget {
 
 class _bottomnavbarState extends State<bottomnavbar> {
   int selectedindex = 0;
+  String? uid; // ✅ Make uid nullable
+  bool isLoading = true;
 
-  final List<Widget> screenlist = [
+  @override
+  void initState() {
+    super.initState();
+    getUid();
+  }
+
+  Future<void> getUid() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      setState(() {
+        uid = user.uid;
+        isLoading = false;
+      });
+    } else {
+      print("❌ FirebaseAuth.currentUser is null!");
+      // Handle redirect to login or error state
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  List<Widget> get screenlist => [
     home(image: '', title: '', subtitle: ''),
     question(),
     trending(),
     message(),
-    profile()
+    profile(userId: uid!),
   ];
 
   final List<String> icons = [

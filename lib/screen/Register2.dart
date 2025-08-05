@@ -43,6 +43,7 @@ class _Register2State extends State<Register2> {
   //   return downloadUrl;
   // }
   late final String docId;
+  bool isLoading = false;
 
 
 
@@ -348,7 +349,9 @@ class _Register2State extends State<Register2> {
 
 
 
-
+               isLoading?Center(
+                  child: CircularProgressIndicator(),
+                 ):
               Center(
                 child: SizedBox(
                   height: 60,
@@ -356,6 +359,8 @@ class _Register2State extends State<Register2> {
                   child: ElevatedButton(
                     onPressed: () async {
                       try{
+                        isLoading = true;
+                        setState(() {});
                         // validations
 
                         if (ProfileImage == null) {

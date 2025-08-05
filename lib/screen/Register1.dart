@@ -297,15 +297,15 @@ class _Register1State extends State<Register1> {
                                       final docId = docRef.id;
 
                                       // Create a user model with name and email
-                                      UserModel user = UserModel(
-                                        name: name.text,
-                                        email: email.text,
-                                        createdAt: DateTime.now().toString(),
-                                        docId: docId,
-                                      );
-                                      await docRef.set(user.toJson());
-                                      // Save to Firestore
-                                      await UserService().createUser(user);
+                                      // UserModel user = UserModel(
+                                      //   name: name.text,
+                                      //   email: email.text,
+                                      //   createdAt: DateTime.now().toString(),
+                                      //   docId: docId,
+                                      // );
+                                      // await docRef.set(user.toJson());
+                                      // // Save to Firestore
+                                      // await UserService().createUser(user);
 
                                       // Navigate to Register2
                                       Navigator.push(
