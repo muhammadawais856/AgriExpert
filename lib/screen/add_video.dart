@@ -1,6 +1,11 @@
 import 'package:agriexpert/screen/trending.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
+import '../Services/video.dart';
+
 
 class add_video extends StatefulWidget {
   const add_video({super.key});
@@ -13,8 +18,40 @@ class _add_videoState extends State<add_video> {
   @override
   TextEditingController title=TextEditingController();
   TextEditingController description=TextEditingController();
+  File? selectedVideo;
+  File? selectedImage;
+  String videoName = "Upload Video";
+  String thumbnailName = "Upload Thumbnail";
+  bool isLoading=false;
 
-  Widget build(BuildContext context) {
+  Future<void> pickVideo() async {
+    final picked = await ImagePicker().pickVideo(source: ImageSource.gallery);
+
+    if (picked != null) {
+      setState(() {
+        selectedVideo = File(picked.path);
+        videoName = picked.name;
+      });
+    }
+  }
+
+  Future<void> pickImage() async {
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (picked != null) {
+      setState(() {
+        selectedImage = File(picked.path);
+        thumbnailName = picked.name; // 👈 update thumbnail name
+      });
+    }
+  }
+
+
+
+
+
+
+    Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -35,13 +72,20 @@ class _add_videoState extends State<add_video> {
             Container(
               height: 179,
               width: MediaQuery.of(context).size.width,
-              child: Center(
-                child: Image.asset(
-                  'Assets/images/play.jpg', width: 48, height: 48,
-                  fit: BoxFit.contain,
-                ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Background: Show uploaded image if available, else show a placeholder
+                  Positioned.fill(
+                    child: selectedImage != null ? Image.file(selectedImage!, fit: BoxFit.cover,)
+                        : Container(color: Colors.white,),),
+
+                  Image.asset('Assets/images/play2.png', width: 48, height: 48, fit: BoxFit.contain,),
+
+                ],
               ),
             ),
+
 
             Padding(
               padding: const EdgeInsets.all(30.0),
@@ -64,11 +108,11 @@ class _add_videoState extends State<add_video> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Upload Video", style: TextStyle(fontSize: 13.33,fontWeight:
+                              Text(videoName, style: TextStyle(fontSize: 13.33,fontWeight:
                               FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFF292929),),),
 
-                              GestureDetector(onTap: (){
-                              },
+                              GestureDetector(
+                                  onTap: pickVideo,
                                   child: Image.asset("Assets/images/upload.jpg", width: 18, height: 20,)),
                             ],
 
@@ -95,11 +139,11 @@ class _add_videoState extends State<add_video> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Upload Thumbnail", style: TextStyle(fontSize: 13.33,fontWeight:
+                              Text(thumbnailName, style: TextStyle(fontSize: 13.33,fontWeight:
                               FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFF292929),),),
 
-                              GestureDetector(onTap: (){
-                              },
+                              GestureDetector(
+                                  onTap: pickImage,
                                   child: Image.asset("Assets/images/upload.jpg", width: 18, height: 20,)),
                             ],
 
@@ -168,8 +212,34 @@ class _add_videoState extends State<add_video> {
                     child: SizedBox(
                       height: 60,
                       width: 315,
-                      child: ElevatedButton(
+                      child: isLoading?Center(
+                        child: CircularProgressIndicator(),
+                      ):
+                      ElevatedButton(
                         onPressed: () {
+
+                          if (title.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter title")),);
+                            return;
+                          }
+
+                          if (description.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Enter description")),);
+                            return;
+                          }
+
+                          if (selectedImage == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload thumbnail image")),);
+                            return;
+                          }
+
+                          if (selectedVideo == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Upload video")),);
+                            return;
+                          }
+
+
+
                           showDialog(context: context,
                               barrierDismissible: false,
                               builder: (context){
