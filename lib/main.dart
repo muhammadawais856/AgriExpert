@@ -1,3 +1,4 @@
+import 'package:agriexpert/provider/user_provider.dart';
 import 'package:agriexpert/screen/Question_search2.dart';
 import 'package:agriexpert/screen/Register2.dart';
 import 'package:agriexpert/screen/bottom_nav_bar.dart';
@@ -9,11 +10,19 @@ import 'package:agriexpert/screen/question.dart';
 import 'package:agriexpert/screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()), // ✅ provide UserProvider globally
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -29,8 +38,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: //splash_screen(),
-      bottomnavbar(),
+      home: splash_screen(),
+      //bottomnavbar(),
       //connection_lost()
 
 

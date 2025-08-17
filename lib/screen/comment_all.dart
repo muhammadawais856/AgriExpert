@@ -1,5 +1,7 @@
+import 'package:agriexpert/models/comment_model.dart';
 import 'package:flutter/material.dart';
 
+import '../Services/comments.dart';
 import '../models/all_model.dart';
 
 class comment_all extends StatefulWidget {
@@ -11,6 +13,7 @@ class comment_all extends StatefulWidget {
 
 class _comment_allState extends State<comment_all> {
   @override
+
   List<AllComments> model = [
     AllComments(
       image: 'Assets/images/user1.jpg',
@@ -43,8 +46,10 @@ class _comment_allState extends State<comment_all> {
       comment: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pulvinar ante id netus sit congue justo. Felis, volutpat sit senectus tempor, aliquam. Tellus proin enim orci in ullamcorper egestas dolor. Dictumst sed.',
     ),
   ];
+  final CommentsService _commentsService = CommentsService();
   Widget build(BuildContext context) {
     return Scaffold(
+
       backgroundColor: Colors.white,
       body: Column(
         children: [
@@ -61,37 +66,79 @@ class _comment_allState extends State<comment_all> {
           ),
 
           Expanded(
-            child: ListView.builder(
-              itemCount: model.length,
-                itemBuilder: (context,i){
-              return Padding(
-                padding: const EdgeInsets.only(right: 30, left: 30, top: 15),
-                child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset(model[i].image,width: 25,height: 25,),
-                    SizedBox(width: 6,),
+            child: FutureBuilder<List<CommentsModel>>(
+              future: _commentsService.getAllComments(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-                    Expanded(
-                      child: Column(
+                final comments = snapshot.data!;
+
+                if (comments.isEmpty) {
+                  return Center(child: Text("No comments found"));
+                }
+
+                return ListView.builder(
+                  itemCount: comments.length,
+                  itemBuilder: (context, i) {
+                    return Padding(
+                      padding:
+                      const EdgeInsets.only(right: 30, left: 30, top: 15),
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(model[i].title,style: TextStyle(fontSize: 11.11,fontWeight:
-                          FontWeight.bold,fontFamily: 'Raleway',color: Color(0xFF292929),),),
-                          Text(model[i].date,style: TextStyle(fontSize: 11.11,fontWeight:
-                          FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFFB4B4B4),),),
-                          Text(model[i].comment,style: TextStyle(fontSize: 11.11,fontWeight:
-                          FontWeight.w400,fontFamily: 'Raleway',color: Color(0xFF292929),),),
+                          Image.asset(
+                            comments[i].image ?? 'assets/images/default_user.png',
+                            width: 25,
+                            height: 25,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Icon(Icons.person, size: 25),
+                          ),
 
+                          SizedBox(width: 6),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  comments[i].title ?? '',
+                                  style: TextStyle(
+                                    fontSize: 11.11,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Raleway',
+                                    color: Color(0xFF292929),
+                                  ),
+                                ),
+                                Text(
+                                  comments[i].date ?? '',
+                                  style: TextStyle(
+                                    fontSize: 11.11,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Raleway',
+                                    color: Color(0xFFB4B4B4),
+                                  ),
+                                ),
+                                SizedBox(height: 10,),
+                                Text(
+                                  comments[i].comment ?? '',
+                                  style: TextStyle(
+                                    fontSize: 11.11,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Raleway',
+                                    color: Color(0xFF292929),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                         ],
                       ),
-                    )
-                  ]
-
-
-                ),
-              );
-            }),
+                    );
+                  },
+                );
+              },
+            ),
           )
 
         ],

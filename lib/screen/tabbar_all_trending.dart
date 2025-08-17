@@ -26,7 +26,7 @@ class _tabbar_all_trendingState extends State<tabbar_all_trending> {
       viewImage: "Assets/images/viewimage.jpg",
       views: "139 Views",
       commentImage: "Assets/images/commentimage.jpg",
-      comments: "22 Comments",
+      comments: "5 Comments",
       commentPageRoute: comment1(),
     ),
     TrainingVideoAllModel(
@@ -38,7 +38,8 @@ class _tabbar_all_trendingState extends State<tabbar_all_trending> {
       viewImage: "Assets/images/viewimage.jpg",
       views: "72 Views",
       commentImage: "Assets/images/commentimage.jpg",
-      comments: "14 Comments",
+      comments: "6 Comments",
+      commentPageRoute: comment1(),
 
     ),
   ];

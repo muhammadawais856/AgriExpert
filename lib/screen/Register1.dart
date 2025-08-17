@@ -3,10 +3,12 @@ import 'package:agriexpert/screen/Register2.dart';
 import 'package:agriexpert/screen/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:string_validator/string_validator.dart';
 
 import '../Services/User.dart';
 import '../models/UserModel.dart';
+import '../provider/user_provider.dart';
 
 class Register1 extends StatefulWidget {
   const Register1({super.key});
@@ -295,6 +297,9 @@ class _Register1State extends State<Register1> {
 
                                       final docRef = FirebaseFirestore.instance.collection('users').doc();
                                       final docId = docRef.id;
+
+                                      Provider.of<UserProvider>(context, listen: false)
+                                          .setUserDetails(name.text, email.text);
 
                                       // Create a user model with name and email
                                       // UserModel user = UserModel(

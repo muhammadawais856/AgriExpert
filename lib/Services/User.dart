@@ -17,27 +17,11 @@ class UserService {
     }
     return null;
   }
-
-  Future<UserModel?> getCurrentUser(String userId) async {
-    try {
-      print("📡 Getting user with ID: $userId");
-      DocumentSnapshot snapshot = await usersCollection.doc(userId).get();
-
-      if (snapshot.exists) {
-        print("✅ User document found: ${snapshot.data()}");
-        return UserModel.fromJson({
-          ...snapshot.data() as Map<String, dynamic>,
-          'docId': snapshot.id,
-        });
-      } else {
-        print("❌ User not found in Firestore.");
-        return null;
-      }
-    } catch (e) {
-      print("🔥 Error fetching user: $e");
-      return null;
-    }
+  Future<void> updateUser(String uid, Map<String, dynamic> updatedData) async {
+    await usersCollection.doc(uid).update(updatedData);
   }
+
+
 
 
 

@@ -41,7 +41,7 @@ class _add_videoState extends State<add_video> {
     if (picked != null) {
       setState(() {
         selectedImage = File(picked.path);
-        thumbnailName = picked.name; // 👈 update thumbnail name
+        thumbnailName = picked.name;
       });
     }
   }

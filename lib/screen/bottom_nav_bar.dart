@@ -15,7 +15,7 @@ class bottomnavbar extends StatefulWidget {
 
 class _bottomnavbarState extends State<bottomnavbar> {
   int selectedindex = 0;
-  String? uid; // ✅ Make uid nullable
+  String? uid;
   bool isLoading = true;
 
   @override
@@ -85,7 +85,7 @@ class _bottomnavbarState extends State<bottomnavbar> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // ✅ Green indicator with bottom curves only
+
                   AnimatedContainer(
                     duration: Duration(milliseconds: 200),
                     height: 6,

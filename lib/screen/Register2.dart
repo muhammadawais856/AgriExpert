@@ -6,11 +6,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import '../Services/User.dart';
 import '../models/UserModel.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import '../Services/ImageUploadService.dart';
+import '../provider/user_provider.dart';
 
 
 
@@ -402,6 +404,8 @@ class _Register2State extends State<Register2> {
                         ImageUploadService imageService = ImageUploadService();
                         String profileUrl = await imageService.uploadImage(ProfileImage!);
                         String degreeUrl = await imageService.uploadImage(degreeImage!);
+                        Provider.of<UserProvider>(context, listen: false)
+                            .setProfilePicture(profileUrl);
 
                         // Create user model
                         UserModel model = UserModel(
